@@ -7,6 +7,7 @@ global:
   imagePullSecrets: []
   # - name: "image-pull-secret"
 
+
   # Labels to apply to all resources
   # Please note that this does not add labels to the resources created dynamically by the controllers.
   # For these resources, you have to add the labels in the template in the cert-manager custom resource:
