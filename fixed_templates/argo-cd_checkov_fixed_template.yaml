@@ -3,7 +3,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: argocd-application-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-application-controller
@@ -17,7 +17,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: argocd-applicationset-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-applicationset-controller
@@ -31,7 +31,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: argocd-notifications-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-notifications-controller
@@ -45,7 +45,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: release-name-argocd-repo-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-repo-server
@@ -59,7 +59,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: argocd-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-server
@@ -73,7 +73,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: argocd-dex-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-dex-server
@@ -86,7 +86,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: argocd-notifications-secret
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-notifications-controller
@@ -101,7 +101,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: argocd-secret
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-secret
@@ -115,7 +115,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-cm
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-cm
@@ -135,7 +135,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-cmd-params-cm
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-cmd-params-cm
@@ -178,7 +178,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-gpg-keys-cm
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-gpg-keys-cm
@@ -190,7 +190,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-notifications-cm
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-notifications-controller
@@ -207,7 +207,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-rbac-cm
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-rbac-cm
@@ -224,7 +224,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-ssh-known-hosts-cm
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-ssh-known-hosts-cm
@@ -266,7 +266,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-tls-certs-cm
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-tls-certs-cm
@@ -16661,7 +16661,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-argocd-application-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-application-controller
@@ -16704,7 +16704,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-argocd-applicationset-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-applicationset-controller
@@ -16797,7 +16797,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-argocd-notifications-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-notifications-controller
@@ -16846,7 +16846,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-argocd-repo-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-repo-server
@@ -16860,7 +16860,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-argocd-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-server
@@ -16908,7 +16908,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-argocd-dex-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-dex-server
@@ -16931,7 +16931,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-argocd-application-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-application-controller
@@ -16952,7 +16952,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-argocd-applicationset-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-applicationset-controller
@@ -16973,7 +16973,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-argocd-notifications-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-notifications-controller
@@ -16994,7 +16994,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-argocd-repo-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-repo-server
@@ -17015,7 +17015,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-argocd-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-server
@@ -17036,7 +17036,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-argocd-dex-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-dex-server
@@ -17053,7 +17053,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-argocd-applicationset-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-applicationset-controller
@@ -17082,7 +17082,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
   name: release-name-argocd-repo-server
-  namespace: test-ns
+  namespace: busybox-namespace
 spec:
   ports:
   - name: https-repo-server
@@ -17097,7 +17097,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-argocd-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-server
@@ -17124,7 +17124,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-argocd-dex-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-dex-server
@@ -17150,7 +17150,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-argocd-redis
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-redis
@@ -17171,7 +17171,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-argocd-applicationset-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-applicationset-controller
@@ -17179,8 +17179,6 @@ metadata:
     app.kubernetes.io/component: applicationset-controller
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -17350,10 +17348,8 @@ spec:
         emptyDir: {}
       dnsPolicy: ClusterFirst
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsUser: 25000
         runAsNonRoot: true
+        runAsUser: 25000
         runAsGroup: 25000
       automountServiceAccountToken: false
 ---
@@ -17361,7 +17357,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-argocd-notifications-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-notifications-controller
@@ -17369,8 +17365,6 @@ metadata:
     app.kubernetes.io/component: notifications-controller
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -17469,10 +17463,8 @@ spec:
             path: ca.crt
       dnsPolicy: ClusterFirst
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsUser: 25000
         runAsNonRoot: true
+        runAsUser: 25000
         runAsGroup: 25000
       automountServiceAccountToken: false
 ---
@@ -17480,7 +17472,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-argocd-repo-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-repo-server
@@ -17488,8 +17480,6 @@ metadata:
     app.kubernetes.io/component: repo-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -17584,10 +17574,10 @@ spec:
             type: RuntimeDefault
           runAsUser: 25000
         resources:
-          requests:
+          limits:
             memory: 128Mi
             cpu: 250m
-          limits:
+          requests:
             memory: 128Mi
             cpu: 250m
       initContainers:
@@ -17613,10 +17603,10 @@ spec:
         - mountPath: /var/run/argocd
           name: var-files
         resources:
-          requests:
+          limits:
             memory: 128Mi
             cpu: 250m
-          limits:
+          requests:
             memory: 128Mi
             cpu: 250m
       affinity:
@@ -17667,10 +17657,8 @@ spec:
           secretName: my-secret
       dnsPolicy: ClusterFirst
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsUser: 25000
         runAsNonRoot: true
+        runAsUser: 25000
         runAsGroup: 25000
       automountServiceAccountToken: false
 ---
@@ -17678,7 +17666,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-argocd-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-server
@@ -17686,8 +17674,6 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -17826,10 +17812,8 @@ spec:
           secretName: my-secret
       dnsPolicy: ClusterFirst
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsUser: 25000
         runAsNonRoot: true
+        runAsUser: 25000
         runAsGroup: 25000
       automountServiceAccountToken: false
 ---
@@ -17837,7 +17821,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-argocd-dex-server
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-dex-server
@@ -17845,8 +17829,6 @@ metadata:
     app.kubernetes.io/component: dex-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -18004,10 +17986,8 @@ spec:
             path: ca.crt
       dnsPolicy: ClusterFirst
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsUser: 25000
         runAsNonRoot: true
+        runAsUser: 25000
         runAsGroup: 25000
       automountServiceAccountToken: false
 ---
@@ -18015,7 +17995,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-argocd-redis
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-redis
@@ -18047,7 +18027,7 @@ spec:
       serviceAccountName: default
       containers:
       - name: redis
-        image: public.ecr.aws/docker/library/redis:6-alpine3.18@sha256:f9fd65500e22bff9ebcd214268f3f03b80a45cffa91d24d7313b242d6750bebc
+        image: public.ecr.aws/docker/library/redis:7.4-alpine3.20@sha256:d58d11d7ef5d5cc3c95e71920331bd156061cef2ca06315d567244f83b41118a
         imagePullPolicy: Always
         args:
         - --save
@@ -18070,8 +18050,8 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsUser: 25000
           readOnlyRootFilesystem: true
+          runAsUser: 25000
         livenessProbe:
           exec:
             command:
@@ -18102,7 +18082,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: release-name-argocd-application-controller
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     helm.sh/chart: argo-cd-5.36.0
     app.kubernetes.io/name: argocd-application-controller
@@ -18110,8 +18090,6 @@ metadata:
     app.kubernetes.io/component: application-controller
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   revisionHistoryLimit: 5
@@ -18217,10 +18195,8 @@ spec:
           secretName: my-secret
       dnsPolicy: ClusterFirst
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsUser: 25000
         runAsNonRoot: true
+        runAsUser: 25000
         runAsGroup: 25000
       automountServiceAccountToken: false
 ---
@@ -18230,43 +18206,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -18274,43 +18214,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -18318,43 +18222,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -18362,43 +18230,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -18406,43 +18238,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -18450,43 +18246,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -18494,40 +18254,4 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
