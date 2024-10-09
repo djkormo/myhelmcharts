@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ServiceAccount
-automountServiceAccountToken: false
+automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager-cainjector
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -15,10 +15,10 @@ metadata:
 ---
 apiVersion: v1
 kind: ServiceAccount
-automountServiceAccountToken: false
+automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -30,10 +30,10 @@ metadata:
 ---
 apiVersion: v1
 kind: ServiceAccount
-automountServiceAccountToken: false
+automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -47,7 +47,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -77,25 +77,6 @@ rules:
   - certificates
   verbs:
   - get
-  - list
-  - watch
-- apiGroups:
-  - ''
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ''
-  resources:
-  - events
-  verbs:
-  - get
-  - create
-  - update
-  - patch
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
@@ -103,30 +84,18 @@ rules:
   - mutatingwebhookconfigurations
   verbs:
   - get
-  - list
-  - watch
-  - update
-  - patch
 - apiGroups:
   - apiregistration.k8s.io
   resources:
   - apiservices
   verbs:
   - get
-  - list
-  - watch
-  - update
-  - patch
 - apiGroups:
   - apiextensions.k8s.io
   resources:
   - customresourcedefinitions
   verbs:
   - get
-  - list
-  - watch
-  - update
-  - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -988,7 +957,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-cert-manager-webhook:dynamic-serving
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1065,7 +1034,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-cert-manager-webhook:dynamic-serving
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1088,7 +1057,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-cert-manager
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -1113,7 +1082,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1138,7 +1107,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-cert-manager-cainjector
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -1147,8 +1116,6 @@ metadata:
     app.kubernetes.io/version: v1.12.1
     app.kubernetes.io/managed-by: Helm
     helm.sh/chart: cert-manager-v1.12.1
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   selector:
@@ -1166,50 +1133,47 @@ spec:
         app.kubernetes.io/version: v1.12.1
         app.kubernetes.io/managed-by: Helm
         helm.sh/chart: cert-manager-v1.12.1
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/cert-manager-cainjector: runtime/default
     spec:
       serviceAccountName: release-name-cert-manager-cainjector
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+        runAsUser: 25000
       containers:
       - name: cert-manager-cainjector
         image: quay.io/jetstack/cert-manager-cainjector:v1.12.1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         args:
         - --v=2
         - --leader-election-namespace=kube-system
-        env: []
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
             - ALL
-          runAsNonRoot: true
-          runAsUser: 25000
-          runAsGroup: 25000
           readOnlyRootFilesystem: true
+          runAsUser: 25000
         resources:
-          requests:
-            cpu: 250m
-            memory: 128Mi
           limits:
-            cpu: 250m
             memory: 128Mi
-        readinessProbe:
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
+        livenessProbe:
           exec:
             command:
             - ls
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        volumeMounts:
-        - name: secret-volume
-          readOnly: true
-          mountPath: /etc/secret-volume
-        livenessProbe:
+        readinessProbe:
           exec:
             command:
             - ls
@@ -1218,17 +1182,13 @@ spec:
           periodSeconds: 10
       nodeSelector:
         kubernetes.io/os: linux
-      volumes:
-      - name: secret-volume
-        secret:
-          secretName: my-secret
       automountServiceAccountToken: false
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-cert-manager
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -1237,8 +1197,6 @@ metadata:
     app.kubernetes.io/version: v1.12.1
     app.kubernetes.io/managed-by: Helm
     helm.sh/chart: cert-manager-v1.12.1
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   selector:
@@ -1260,17 +1218,17 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9402'
-        container.apparmor.security.beta.kubernetes.io/cert-manager-controller: runtime/default
     spec:
       serviceAccountName: release-name-cert-manager
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+        runAsUser: 25000
       containers:
       - name: cert-manager-controller
         image: quay.io/jetstack/cert-manager-controller:v1.12.1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         args:
         - --v=2
         - --cluster-resource-namespace=$(POD_NAMESPACE)
@@ -1289,30 +1247,28 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsNonRoot: true
-          runAsUser: 25000
-          runAsGroup: 25000
           readOnlyRootFilesystem: true
-        env: []
+          runAsUser: 25000
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         resources:
-          requests:
-            cpu: 250m
-            memory: 128Mi
           limits:
-            cpu: 250m
             memory: 128Mi
-        readinessProbe:
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
+        livenessProbe:
           exec:
             command:
             - ls
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        volumeMounts:
-        - name: secret-volume
-          readOnly: true
-          mountPath: /etc/secret-volume
-        livenessProbe:
+        readinessProbe:
           exec:
             command:
             - ls
@@ -1321,16 +1277,13 @@ spec:
           periodSeconds: 10
       nodeSelector:
         kubernetes.io/os: linux
-      volumes:
-      - name: secret-volume
-        secret:
-          secretName: my-secret
+      automountServiceAccountToken: false
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1339,8 +1292,6 @@ metadata:
     app.kubernetes.io/version: v1.12.1
     app.kubernetes.io/managed-by: Helm
     helm.sh/chart: cert-manager-v1.12.1
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   replicas: 1
   selector:
@@ -1358,18 +1309,17 @@ spec:
         app.kubernetes.io/version: v1.12.1
         app.kubernetes.io/managed-by: Helm
         helm.sh/chart: cert-manager-v1.12.1
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/cert-manager-webhook: runtime/default
     spec:
       serviceAccountName: release-name-cert-manager-webhook
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+        runAsUser: 25000
       containers:
       - name: cert-manager-webhook
         image: quay.io/jetstack/cert-manager-webhook:v1.12.1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         args:
         - --v=2
         - --secure-port=10250
@@ -1410,28 +1360,22 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsNonRoot: true
-          runAsUser: 25000
-          runAsGroup: 25000
           readOnlyRootFilesystem: true
-        env: []
+          runAsUser: 25000
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         resources:
-          requests:
-            cpu: 250m
-            memory: 128Mi
           limits:
-            cpu: 250m
             memory: 128Mi
-        volumeMounts:
-        - name: secret-volume
-          readOnly: true
-          mountPath: /etc/secret-volume
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
       nodeSelector:
         kubernetes.io/os: linux
-      volumes:
-      - name: secret-volume
-        secret:
-          secretName: my-secret
       automountServiceAccountToken: false
 ---
 apiVersion: admissionregistration.k8s.io/v1
@@ -1524,10 +1468,10 @@ webhooks:
 ---
 apiVersion: v1
 kind: ServiceAccount
-automountServiceAccountToken: false
+automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager-startupapicheck
-  namespace: default
+  namespace: busybox-namespace
   annotations:
     helm.sh/hook: post-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
@@ -1545,7 +1489,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-cert-manager-startupapicheck:create-cert
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: startupapicheck
     app.kubernetes.io/name: startupapicheck
@@ -1570,7 +1514,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-cert-manager-startupapicheck:create-cert
-  namespace: default
+  namespace: busybox-namespace
   labels:
     app: startupapicheck
     app.kubernetes.io/name: startupapicheck
@@ -1596,7 +1540,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: release-name-cert-manager-startupapicheck
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: startupapicheck
     app.kubernetes.io/name: startupapicheck
@@ -1609,7 +1553,6 @@ metadata:
     helm.sh/hook: post-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: '1'
-    seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
   backoffLimit: 4
   template:
@@ -1622,8 +1565,6 @@ spec:
         app.kubernetes.io/version: v1.12.1
         app.kubernetes.io/managed-by: Helm
         helm.sh/chart: cert-manager-v1.12.1
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/cert-manager-startupapicheck: runtime/default
     spec:
       restartPolicy: OnFailure
       serviceAccountName: release-name-cert-manager-startupapicheck
@@ -1631,10 +1572,11 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+        runAsUser: 25000
       containers:
       - name: cert-manager-startupapicheck
         image: quay.io/jetstack/cert-manager-ctl:v1.12.1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         args:
         - check
         - api
@@ -1644,30 +1586,47 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsNonRoot: true
-          runAsUser: 25000
-          runAsGroup: 25000
           readOnlyRootFilesystem: true
+          runAsUser: 25000
         resources:
-          requests:
-            cpu: 250m
-            memory: 128Mi
           limits:
-            cpu: 250m
             memory: 128Mi
-        readinessProbe:
-          exec:
-            command:
-            - ls
-            - /
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        livenessProbe:
-          exec:
-            command:
-            - ls
-            - /
-          initialDelaySeconds: 30
-          periodSeconds: 10
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
       nodeSelector:
         kubernetes.io/os: linux
+      automountServiceAccountToken: false
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+spec:
+  podSelector: {}
+  policyTypes: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+spec:
+  podSelector: {}
+  policyTypes: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+spec:
+  podSelector: {}
+  policyTypes: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+spec:
+  podSelector: {}
+  policyTypes: []
