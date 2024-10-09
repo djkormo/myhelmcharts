@@ -3,7 +3,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager-cainjector
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -18,7 +18,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -33,7 +33,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -47,7 +47,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -957,7 +957,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-cert-manager-webhook:dynamic-serving
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1034,7 +1034,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-cert-manager-webhook:dynamic-serving
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1057,7 +1057,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-cert-manager
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -1082,7 +1082,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1107,7 +1107,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-cert-manager-cainjector
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -1157,8 +1157,15 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsUser: 25000
           readOnlyRootFilesystem: true
+          runAsUser: 25000
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -1166,13 +1173,6 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
-          limits:
-            memory: 128Mi
-            cpu: 250m
         readinessProbe:
           exec:
             command:
@@ -1188,7 +1188,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-cert-manager
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -1247,13 +1247,20 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsUser: 25000
           readOnlyRootFilesystem: true
+          runAsUser: 25000
         env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -1261,13 +1268,6 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
-          limits:
-            memory: 128Mi
-            cpu: 250m
         readinessProbe:
           exec:
             command:
@@ -1283,7 +1283,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-name-cert-manager-webhook
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -1360,18 +1360,18 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsUser: 25000
           readOnlyRootFilesystem: true
+          runAsUser: 25000
         env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
         resources:
-          requests:
+          limits:
             memory: 128Mi
             cpu: 250m
-          limits:
+          requests:
             memory: 128Mi
             cpu: 250m
       nodeSelector:
@@ -1471,7 +1471,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: release-name-cert-manager-startupapicheck
-  namespace: test-ns
+  namespace: busybox-namespace
   annotations:
     helm.sh/hook: post-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
@@ -1489,7 +1489,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: release-name-cert-manager-startupapicheck:create-cert
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: startupapicheck
     app.kubernetes.io/name: startupapicheck
@@ -1514,7 +1514,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: release-name-cert-manager-startupapicheck:create-cert
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: startupapicheck
     app.kubernetes.io/name: startupapicheck
@@ -1540,7 +1540,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: release-name-cert-manager-startupapicheck
-  namespace: test-ns
+  namespace: busybox-namespace
   labels:
     app: startupapicheck
     app.kubernetes.io/name: startupapicheck
@@ -1586,13 +1586,13 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsUser: 25000
           readOnlyRootFilesystem: true
+          runAsUser: 25000
         resources:
-          requests:
+          limits:
             memory: 128Mi
             cpu: 250m
-          limits:
+          requests:
             memory: 128Mi
             cpu: 250m
       nodeSelector:
@@ -1605,43 +1605,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -1649,43 +1613,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -1693,43 +1621,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -1737,40 +1629,4 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
