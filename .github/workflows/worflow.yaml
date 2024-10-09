@@ -19,7 +19,7 @@ on:
       second_tool:
         description: 'The second tool to analyze the chart'
         required: true
-        default: 'checkov'
+        default: 'kics'
         type: string 
 
 jobs:
