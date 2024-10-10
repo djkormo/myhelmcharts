@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: 7.4.0
   name: release-name-oauth2-proxy
-  namespace: test-ns
+  namespace: busybox-namespace
 automountServiceAccountToken: true
 ---
 apiVersion: v1
@@ -27,7 +27,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: 7.4.0
   name: release-name-oauth2-proxy
-  namespace: test-ns
+  namespace: busybox-namespace
 type: Opaque
 data:
   cookie-secret: WFhYWFhYWFhYWFhYWFhYWA==
@@ -47,7 +47,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: 7.4.0
   name: release-name-oauth2-proxy
-  namespace: test-ns
+  namespace: busybox-namespace
 data:
   oauth2_proxy.cfg: 'email_domains = [ "*" ]
 
@@ -66,7 +66,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: 7.4.0
   name: release-name-oauth2-proxy
-  namespace: test-ns
+  namespace: busybox-namespace
 spec:
   type: ClusterIP
   ports:
@@ -97,7 +97,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: 7.4.0
   name: release-name-oauth2-proxy
-  namespace: test-ns
+  namespace: busybox-namespace
   annotations:
     seccomp.security.alpha.kubernetes.io/pod: runtime/default
 spec:
@@ -175,12 +175,12 @@ spec:
           readOnly: true
           mountPath: /etc/secret-volume
         securityContext:
+          readOnlyRootFilesystem: true
           capabilities:
             drop:
             - ALL
           allowPrivilegeEscalation: false
           runAsUser: 25000
-          readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsGroup: 25000
       volumes:
@@ -193,11 +193,11 @@ spec:
           secretName: my-secret
       tolerations: []
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 25000
+        runAsGroup: 25000
         seccompProfile:
           type: RuntimeDefault
-        runAsUser: 25000
-        runAsNonRoot: true
-        runAsGroup: 25000
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -205,40 +205,4 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
