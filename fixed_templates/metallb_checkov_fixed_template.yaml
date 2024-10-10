@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
-  namespace: test-ns
+  namespace: busybox-namespace
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: speaker
-  namespace: test-ns
+  namespace: busybox-namespace
 ---
 apiVersion: v1
 kind: Secret
@@ -34,13 +34,13 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
-  namespace: test-ns
+  namespace: busybox-namespace
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metallb-excludel2
-  namespace: test-ns
+  namespace: busybox-namespace
 data:
   excludel2.yaml: 'announcedInterfacesToExclude:
 
@@ -83,7 +83,7 @@ metadata:
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: speaker
-  namespace: test-ns
+  namespace: busybox-namespace
 data:
   daemons: '# This file tells the frr package which daemons to start.
 
@@ -1638,7 +1638,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
-  namespace: test-ns
+  namespace: busybox-namespace
 rules:
 - apiGroups:
   - ''
@@ -1729,7 +1729,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
-  namespace: test-ns
+  namespace: busybox-namespace
 rules:
 - apiGroups:
   - ''
@@ -1832,7 +1832,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
-  namespace: test-ns
+  namespace: busybox-namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -1851,7 +1851,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
-  namespace: test-ns
+  namespace: busybox-namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -1870,7 +1870,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
-  namespace: test-ns
+  namespace: busybox-namespace
 spec:
   ports:
   - port: 443
@@ -1893,7 +1893,7 @@ metadata:
     app.kubernetes.io/component: speaker
   annotations:
     seccomp.security.alpha.kubernetes.io/pod: runtime/default
-  namespace: test-ns
+  namespace: busybox-namespace
 spec:
   updateStrategy:
     type: RollingUpdate
@@ -1941,8 +1941,8 @@ spec:
           capabilities:
             drop:
             - ALL
-          allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
           runAsNonRoot: true
         command:
         - /bin/sh
@@ -1953,6 +1953,13 @@ spec:
           mountPath: /tmp/frr
         - name: frr-conf
           mountPath: /etc/frr
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -1960,14 +1967,6 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
-          limits:
-            memory: 128Mi
-            cpu: 250m
-        imagePullPolicy: Always
         readinessProbe:
           exec:
             command:
@@ -1975,6 +1974,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: cp-reloader
         image: quay.io/metallb/speaker:v0.13.10
         command:
@@ -1984,15 +1984,13 @@ spec:
         volumeMounts:
         - name: reloader
           mountPath: /etc/frr_reloader
-        securityContext:
-          capabilities:
-            drop:
-            - ALL
-          allowPrivilegeEscalation: false
-          runAsUser: 25000
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsGroup: 25000
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2000,14 +1998,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
-          limits:
-            memory: 128Mi
-            cpu: 250m
-        imagePullPolicy: Always
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 25000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2015,6 +2014,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: cp-metrics
         image: quay.io/metallb/speaker:v0.13.10
         command:
@@ -2024,15 +2024,13 @@ spec:
         volumeMounts:
         - name: metrics
           mountPath: /etc/frr_metrics
-        securityContext:
-          capabilities:
-            drop:
-            - ALL
-          allowPrivilegeEscalation: false
-          runAsUser: 25000
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsGroup: 25000
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2040,14 +2038,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
-          limits:
-            memory: 128Mi
-            cpu: 250m
-        imagePullPolicy: Always
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 25000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2055,6 +2054,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       shareProcessNamespace: true
       containers:
       - name: speaker
@@ -2127,10 +2127,10 @@ spec:
         - name: metallb-excludel2
           mountPath: /etc/metallb
         resources:
-          requests:
+          limits:
             memory: 128Mi
             cpu: 250m
-          limits:
+          requests:
             memory: 128Mi
             cpu: 250m
         imagePullPolicy: Always
@@ -2139,9 +2139,9 @@ spec:
           capabilities:
             drop:
             - ALL
+          readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           runAsUser: 25000
-          readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsGroup: 25000
         image: quay.io/frrouting/frr:8.4.2
@@ -2173,13 +2173,12 @@ spec:
           failureThreshold: 30
           periodSeconds: 5
         resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
           limits:
             memory: 128Mi
             cpu: 250m
-        imagePullPolicy: Always
+          requests:
+            memory: 128Mi
+            cpu: 250m
         readinessProbe:
           exec:
             command:
@@ -2187,6 +2186,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: reloader
         image: quay.io/frrouting/frr:8.4.2
         command:
@@ -2198,15 +2198,13 @@ spec:
           mountPath: /etc/frr
         - name: reloader
           mountPath: /etc/frr_reloader
-        securityContext:
-          capabilities:
-            drop:
-            - ALL
-          allowPrivilegeEscalation: false
-          runAsUser: 25000
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsGroup: 25000
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2214,14 +2212,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
-          limits:
-            memory: 128Mi
-            cpu: 250m
-        imagePullPolicy: Always
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 25000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2229,6 +2228,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: frr-metrics
         image: quay.io/frrouting/frr:8.4.2
         command:
@@ -2245,15 +2245,13 @@ spec:
           mountPath: /etc/frr
         - name: metrics
           mountPath: /etc/frr_metrics
-        securityContext:
-          capabilities:
-            drop:
-            - ALL
-          allowPrivilegeEscalation: false
-          runAsUser: 25000
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsGroup: 25000
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 250m
+          requests:
+            memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2261,14 +2259,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 250m
-          limits:
-            memory: 128Mi
-            cpu: 250m
-        imagePullPolicy: Always
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 25000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2276,6 +2275,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       nodeSelector:
         kubernetes.io/os: linux
       tolerations:
@@ -2286,11 +2286,11 @@ spec:
         effect: NoSchedule
         operator: Exists
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 25000
+        runAsGroup: 25000
         seccompProfile:
           type: RuntimeDefault
-        runAsUser: 25000
-        runAsNonRoot: true
-        runAsGroup: 25000
       automountServiceAccountToken: false
 ---
 apiVersion: apps/v1
@@ -2306,7 +2306,7 @@ metadata:
     app.kubernetes.io/component: controller
   annotations:
     seccomp.security.alpha.kubernetes.io/pod: runtime/default
-  namespace: test-ns
+  namespace: busybox-namespace
 spec:
   strategy:
     type: RollingUpdate
@@ -2379,10 +2379,10 @@ spec:
             drop:
             - ALL
         resources:
-          requests:
+          limits:
             memory: 128Mi
             cpu: 250m
-          limits:
+          requests:
             memory: 128Mi
             cpu: 250m
         imagePullPolicy: Always
@@ -2553,43 +2553,7 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -2597,40 +2561,4 @@ metadata:
   name: test-network-policy
 spec:
   podSelector: {}
-  ingress:
-  - {}
-  policyTypes:
-  - Ingress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: test-network-policy
-  namespace: test-ns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+  policyTypes: []
