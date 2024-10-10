@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
+  namespace: busybox-namespace
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -21,6 +22,7 @@ metadata:
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: speaker
+  namespace: busybox-namespace
 ---
 apiVersion: v1
 kind: Secret
@@ -32,11 +34,13 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
+  namespace: busybox-namespace
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metallb-excludel2
+  namespace: busybox-namespace
 data:
   excludel2.yaml: 'announcedInterfacesToExclude:
 
@@ -79,6 +83,7 @@ metadata:
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: speaker
+  namespace: busybox-namespace
 data:
   daemons: '# This file tells the frr package which daemons to start.
 
@@ -1492,33 +1497,24 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
-  - ''
+  - v1
   resources:
   - services
   - namespaces
   verbs:
   - get
-  - list
-  - watch
 - apiGroups:
-  - ''
+  - v1
   resources:
   - nodes
   verbs:
-  - list
+  - get
 - apiGroups:
-  - ''
+  - v1
   resources:
   - services/status
   verbs:
-  - update
-- apiGroups:
-  - ''
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
+  - get
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
@@ -1527,21 +1523,14 @@ rules:
   resourceNames:
   - metallb-webhook-configuration
   verbs:
-  - create
-  - delete
   - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
   - validatingwebhookconfigurations
   - mutatingwebhookconfigurations
   verbs:
-  - list
-  - watch
+  - get
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -1555,20 +1544,13 @@ rules:
   - l2advertisements.metallb.io
   - communities.metallb.io
   verbs:
-  - create
-  - delete
   - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - apiextensions.k8s.io
   resources:
   - customresourcedefinitions
   verbs:
-  - list
-  - watch
+  - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1656,6 +1638,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
+  namespace: busybox-namespace
 rules:
 - apiGroups:
   - ''
@@ -1746,6 +1729,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
+  namespace: busybox-namespace
 rules:
 - apiGroups:
   - ''
@@ -1848,6 +1832,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
+  namespace: busybox-namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -1866,6 +1851,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
+  namespace: busybox-namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -1884,6 +1870,7 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: v0.13.10
     app.kubernetes.io/managed-by: Helm
+  namespace: busybox-namespace
 spec:
   ports:
   - port: 443
@@ -1906,6 +1893,7 @@ metadata:
     app.kubernetes.io/component: speaker
   annotations:
     seccomp.security.alpha.kubernetes.io/pod: runtime/default
+  namespace: busybox-namespace
 spec:
   updateStrategy:
     type: RollingUpdate
@@ -1920,14 +1908,6 @@ spec:
         app.kubernetes.io/name: metallb
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/component: speaker
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/speaker: runtime/default
-        container.apparmor.security.beta.kubernetes.io/frr: runtime/default
-        container.apparmor.security.beta.kubernetes.io/reloader: runtime/default
-        container.apparmor.security.beta.kubernetes.io/frr-metrics: runtime/default
-        container.apparmor.security.beta.kubernetes.io/cp-frr-files: runtime/default
-        container.apparmor.security.beta.kubernetes.io/cp-reloader: runtime/default
-        container.apparmor.security.beta.kubernetes.io/cp-metrics: runtime/default
     spec:
       serviceAccountName: release-name-metallb-speaker
       terminationGracePeriodSeconds: 0
@@ -1952,18 +1932,18 @@ spec:
         emptyDir: {}
       - name: metrics
         emptyDir: {}
-      - name: secret-volume
-        secret:
-          secretName: my-secret
       initContainers:
       - name: cp-frr-files
         image: quay.io/frrouting/frr:8.4.2
         securityContext:
-          runAsUser: 1001
+          runAsUser: 1000
           runAsGroup: 101
+          capabilities:
+            drop:
+            - ALL
           readOnlyRootFilesystem: true
-          runAsNonRoot: true
           allowPrivilegeEscalation: false
+          runAsNonRoot: true
         command:
         - /bin/sh
         - -c
@@ -1975,11 +1955,11 @@ spec:
           mountPath: /etc/frr
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -1994,6 +1974,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: cp-reloader
         image: quay.io/metallb/speaker:v0.13.10
         command:
@@ -2003,19 +1984,13 @@ spec:
         volumeMounts:
         - name: reloader
           mountPath: /etc/frr_reloader
-        securityContext:
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1001
-          runAsGroup: 25000
-          allowPrivilegeEscalation: false
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2023,6 +1998,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 1000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2030,6 +2014,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: cp-metrics
         image: quay.io/metallb/speaker:v0.13.10
         command:
@@ -2039,19 +2024,13 @@ spec:
         volumeMounts:
         - name: metrics
           mountPath: /etc/frr_metrics
-        securityContext:
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1001
-          runAsGroup: 25000
-          allowPrivilegeEscalation: false
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2059,6 +2038,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 1000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2066,6 +2054,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       shareProcessNamespace: true
       containers:
       - name: speaker
@@ -2074,6 +2063,18 @@ spec:
         - --port=7472
         - --log-level=info
         env:
+        - name: METALLB_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: METALLB_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: METALLB_ML_BIND_ADDR
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         - name: METALLB_ML_LABELS
           value: app.kubernetes.io/name=metallb,app.kubernetes.io/component=speaker
         - name: METALLB_ML_BIND_PORT
@@ -2113,10 +2114,10 @@ spec:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           capabilities:
-            add:
-            - NET_RAW
-          runAsNonRoot: true
-          runAsUser: 1001
+            drop:
+            - ALL
+          runAsUser: 1000
+          runAsNonRoot: false
           runAsGroup: 25000
         volumeMounts:
         - name: memberlist
@@ -2125,29 +2126,24 @@ spec:
           mountPath: /etc/frr_reloader
         - name: metallb-excludel2
           mountPath: /etc/metallb
-        - name: secret-volume
-          readOnly: true
-          mountPath: /etc/secret-volume
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
+        imagePullPolicy: Always
       - name: frr
         securityContext:
           capabilities:
-            add:
-            - NET_ADMIN
-            - NET_RAW
-            - SYS_ADMIN
-            - NET_BIND_SERVICE
+            drop:
+            - ALL
           readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1001
-          runAsGroup: 25000
           allowPrivilegeEscalation: false
+          runAsUser: 1000
+          runAsNonRoot: true
+          runAsGroup: 25000
         image: quay.io/frrouting/frr:8.4.2
         env:
         - name: TINI_SUBREAPER
@@ -2157,9 +2153,6 @@ spec:
           mountPath: /var/run/frr
         - name: frr-conf
           mountPath: /etc/frr
-        - name: secret-volume
-          readOnly: true
-          mountPath: /etc/secret-volume
         command:
         - /bin/sh
         - -c
@@ -2181,11 +2174,11 @@ spec:
           periodSeconds: 5
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
         readinessProbe:
           exec:
             command:
@@ -2193,6 +2186,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: reloader
         image: quay.io/frrouting/frr:8.4.2
         command:
@@ -2204,22 +2198,13 @@ spec:
           mountPath: /etc/frr
         - name: reloader
           mountPath: /etc/frr_reloader
-        - name: secret-volume
-          readOnly: true
-          mountPath: /etc/secret-volume
-        securityContext:
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1001
-          runAsGroup: 25000
-          allowPrivilegeEscalation: false
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2227,6 +2212,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 1000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2234,6 +2228,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       - name: frr-metrics
         image: quay.io/frrouting/frr:8.4.2
         command:
@@ -2250,22 +2245,13 @@ spec:
           mountPath: /etc/frr
         - name: metrics
           mountPath: /etc/frr_metrics
-        - name: secret-volume
-          readOnly: true
-          mountPath: /etc/secret-volume
-        securityContext:
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1001
-          runAsGroup: 25000
-          allowPrivilegeEscalation: false
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
         livenessProbe:
           exec:
             command:
@@ -2273,6 +2259,15 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsUser: 1000
+          runAsNonRoot: true
+          runAsGroup: 25000
         readinessProbe:
           exec:
             command:
@@ -2280,6 +2275,7 @@ spec:
             - /
           initialDelaySeconds: 30
           periodSeconds: 10
+        imagePullPolicy: Always
       nodeSelector:
         kubernetes.io/os: linux
       tolerations:
@@ -2291,7 +2287,7 @@ spec:
         operator: Exists
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1001
+        runAsUser: 1000
         runAsGroup: 25000
         seccompProfile:
           type: RuntimeDefault
@@ -2310,6 +2306,7 @@ metadata:
     app.kubernetes.io/component: controller
   annotations:
     seccomp.security.alpha.kubernetes.io/pod: runtime/default
+  namespace: busybox-namespace
 spec:
   strategy:
     type: RollingUpdate
@@ -2324,8 +2321,6 @@ spec:
         app.kubernetes.io/name: metallb
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/component: controller
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/controller: runtime/default
     spec:
       serviceAccountName: release-name-metallb-controller
       terminationGracePeriodSeconds: 0
@@ -2383,16 +2378,14 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsNonRoot: true
-          runAsUser: 25000
-          runAsGroup: 25000
         resources:
           limits:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
           requests:
-            cpu: 250m
             memory: 128Mi
+            cpu: 250m
+        imagePullPolicy: Always
       nodeSelector:
         kubernetes.io/os: linux
       volumes:
@@ -2400,6 +2393,7 @@ spec:
         secret:
           defaultMode: 420
           secretName: webhook-server-cert
+      automountServiceAccountToken: false
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
@@ -2552,3 +2546,19 @@ webhooks:
     resources:
     - l2advertisements
   sideEffects: None
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+spec:
+  podSelector: {}
+  policyTypes: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+spec:
+  podSelector: {}
+  policyTypes: []
